@@ -2,7 +2,9 @@ package servers
 
 import (
 	"goskeleton/controllers"
+	"goskeleton/models"
 	"os"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 
@@ -24,7 +26,8 @@ type Server struct {
 
 //AppConfig type for application config
 type AppConfig struct {
-	DbConnectionUrl string
+	DbConnectionURL string
+	AutoMigrate     bool
 }
 
 //New function to initialize Server object
@@ -35,6 +38,7 @@ func New() *Server {
 	s.e.Use(middleware.Recover())
 	s.initConfig()
 	s.dbConnection()
+	s.migrate()
 	s.registerController()
 	return s
 }
@@ -50,6 +54,7 @@ func (s *Server) registerController() {
 		&controllers.RegistrationController{},
 		&controllers.LoginController{},
 		&controllers.UserController{},
+		&controllers.ProductController{},
 	)
 }
 
@@ -67,16 +72,28 @@ func (s *Server) initConfig() {
 	}
 
 	config := &AppConfig{}
-	config.DbConnectionUrl = os.Getenv("DB_CONNECTION_URL")
+	config.DbConnectionURL = os.Getenv("DB_CONNECTION_URL")
 
+	autoMigrateFlag, _ := strconv.ParseBool(os.Getenv("DB_AUTOMIGRATE"))
+
+	config.AutoMigrate = autoMigrateFlag
 	s.config = config
 }
 
 func (s *Server) dbConnection() {
-	db, err := gorm.Open("mysql", s.config.DbConnectionUrl)
+	db, err := gorm.Open("mysql", s.config.DbConnectionURL)
 	if err != nil {
 		s.e.Logger.Fatal(err)
 	} else {
 		s.db = db
+	}
+}
+
+func (s *Server) migrate() {
+	if s.config.AutoMigrate {
+		s.db.AutoMigrate(
+			&models.User{},
+			&models.Product{},
+		)
 	}
 }
