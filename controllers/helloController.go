@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/middleware"
 
 	"github.com/labstack/echo"
@@ -29,3 +30,6 @@ func (h *HelloController) InitializeRoute(e *echo.Echo) {
 	var SecretKey = "shoulduseprivatekey"
 	e.GET("/", h.HelloWorld, middleware.JWT([]byte(SecretKey)))
 }
+
+//SetDB no db to set, but because register
+func (h *HelloController) SetDB(db *gorm.DB) {}

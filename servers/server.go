@@ -45,24 +45,19 @@ func (s *Server) Start() {
 }
 
 func (s *Server) registerController() {
-	//Hello Controller
-	h := &controllers.HelloController{}
-	h.InitializeRoute(s.e)
+	s.addControllers(
+		&controllers.HelloController{},
+		&controllers.RegistrationController{},
+		&controllers.LoginController{},
+		&controllers.UserController{},
+	)
+}
 
-	//Registration Controller
-	r := &controllers.RegistrationController{}
-	r.InitializeRoute(s.e)
-	r.SetDB(s.db)
-
-	//Login Controller
-	l := &controllers.LoginController{}
-	l.InitializeRoute(s.e)
-	l.SetDB(s.db)
-
-	//UserController
-	u := &controllers.UserController{}
-	u.InitializeRoute(s.e)
-	u.SetDB(s.db)
+func (s *Server) addControllers(ctrls ...controllers.Controller) {
+	for _, c := range ctrls {
+		c.InitializeRoute(s.e)
+		c.SetDB(s.db)
+	}
 }
 
 func (s *Server) initConfig() {
