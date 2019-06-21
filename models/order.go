@@ -11,5 +11,5 @@ type Order struct {
 	Qty       int
 	Status    string
 	UserID    uint
-	User      User
+	User      User `json:"-"`
 }

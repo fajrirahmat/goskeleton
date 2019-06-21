@@ -50,11 +50,20 @@ func (p *ProductController) getUserIDfromToken(ctx echo.Context) uint {
 	return userDB.ID
 }
 
+func (p *ProductController) Search(ctx echo.Context) error {
+	q := ctx.QueryParam("q")
+	var products []models.Product
+	p.db.Where("name LIKE ?", "%"+q+"%").Find(&products)
+	return ctx.JSON(http.StatusOK, products)
+}
+
 //InitializeRoute init route for this Controller
 func (p *ProductController) InitializeRoute(e *echo.Echo) {
 	r := e.Group("/products", middlewares.GetJWTMiddleware())
 	r.GET("", p.List)
 	r.POST("/add", p.Add)
+
+	e.GET("/search", p.Search, middlewares.GetJWTMiddleware())
 }
 
 //SetDB inject DB

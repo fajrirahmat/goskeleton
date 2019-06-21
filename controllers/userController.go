@@ -48,6 +48,13 @@ func (u *UserController) GetUserOrderHistory(ctx echo.Context) error {
 	u.db.Where("email = ?", email).Find(&profile)
 	var orders []models.Order
 	u.db.Where("user_id = ?", profile.ID).Find(&orders)
+	for i := range orders {
+		var p models.Product
+		o := orders[i]
+		u.db.Model(&o).Related(&p)
+		p.Stock = 0
+		orders[i].Product = p
+	}
 	return ctx.JSON(http.StatusOK, orders)
 }
 
