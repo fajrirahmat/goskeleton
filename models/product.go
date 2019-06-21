@@ -6,8 +6,9 @@ import (
 
 type Product struct {
 	gorm.Model
-	Name      string
-	Price     float64
-	Stock     int32
-	CreatedBy uint
+	Name   string
+	Price  float64
+	Stock  int
+	UserID uint
+	User   User `json:"-"`
 }

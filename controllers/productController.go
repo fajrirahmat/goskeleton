@@ -15,9 +15,9 @@ type ProductController struct {
 }
 
 func (p *ProductController) List(ctx echo.Context) error {
-	var users []models.Product
-	p.db.Find(&users)
-	return ctx.JSON(http.StatusOK, users)
+	var products []models.Product
+	p.db.Find(&products)
+	return ctx.JSON(http.StatusOK, products)
 }
 
 func (p *ProductController) Add(ctx echo.Context) error {
@@ -29,10 +29,10 @@ func (p *ProductController) Add(ctx echo.Context) error {
 	}
 
 	p.db.Create(&models.Product{
-		Name:      addPrdRequest.Name,
-		Price:     addPrdRequest.Price,
-		Stock:     addPrdRequest.Stock,
-		CreatedBy: p.getUserIDfromToken(ctx),
+		Name:   addPrdRequest.Name,
+		Price:  addPrdRequest.Price,
+		Stock:  addPrdRequest.Stock,
+		UserID: p.getUserIDfromToken(ctx),
 	})
 
 	return ctx.JSON(http.StatusCreated, map[string]string{
@@ -63,9 +63,10 @@ func (p *ProductController) SetDB(db *gorm.DB) {
 }
 
 type (
+	//AddProductRequest request to add product
 	AddProductRequest struct {
-		Name  string
-		Price float64
-		Stock int32
+		Name  string  `json:"name"`
+		Price float64 `json:"price"`
+		Stock int     `json:"stock"`
 	}
 )

@@ -55,6 +55,7 @@ func (s *Server) registerController() {
 		&controllers.LoginController{},
 		&controllers.UserController{},
 		&controllers.ProductController{},
+		&controllers.OrderController{},
 	)
 }
 
@@ -94,6 +95,7 @@ func (s *Server) migrate() {
 		s.db.AutoMigrate(
 			&models.User{},
 			&models.Product{},
+			&models.Order{},
 		)
 	}
 }
