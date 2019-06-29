@@ -36,6 +36,7 @@ func New() *Server {
 	s.e = echo.New()
 	s.e.Use(middleware.Logger())
 	s.e.Use(middleware.Recover())
+	s.e.Use(middleware.CORS())
 	s.initConfig()
 	s.dbConnection()
 	s.migrate()
